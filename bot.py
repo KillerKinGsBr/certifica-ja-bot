@@ -7,20 +7,12 @@ from telegram.ext import (
     ContextTypes
 )
 
-# ==================================================
-# TOKEN DO BOT (VARIÁVEL DE AMBIENTE)
-# ==================================================
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 if not TOKEN:
-    raise RuntimeError(
-        "TOKEN não encontrado. Defina a variável TELEGRAM_BOT_TOKEN"
-    )
+    raise RuntimeError("TOKEN não encontrado")
 
 
-# ==================================================
-# /start
-# ==================================================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("📘 Ensino Médio", callback_data="ensino_medio")],
@@ -30,11 +22,37 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_text(
-        "👋 *Bem-vindo!*\n\n"
-        "Escolha uma opção abaixo:",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
+        "👋 Bem-vindo!\n\nEscolha uma opção:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
     )
+
+
+async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    mensagens = {
+        "ensino_medio": "📘 Ensino Médio\nCertificado reconhecido pelo MEC.",
+        "cursos_tecnicos": "🛠 Cursos Técnicos\nDiversas áreas disponíveis.",
+        "graduacao": "🎓 Graduação\nEnsino superior reconhecido pelo MEC.",
+        "pos_graduacao": "📚 Pós-graduações\nEspecializações reconhecidas."
+    }
+
+    await query.edit_message_text(
+        mensagens.get(query.data, "Opção inválida.")
+    )
+
+
+def main():
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(menu_callback))
+    print("Bot rodando...")
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()    )
 
 
 # ==================================================
