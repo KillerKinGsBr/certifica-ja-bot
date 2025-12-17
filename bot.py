@@ -1,40 +1,138 @@
-from telegram import Update, ReplyKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 import os
-
-menu_principal = ReplyKeyboardMarkup(
-    [
-        ["🎓 Pós-graduação", "🎓 Ensino Superior"],
-        ["🧑‍🎓 Ensino Médio", "🛠️ Curso Técnico"],
-        ["💬 Falar com atendente"]
-    ],
-    resize_keyboard=True
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import (
+    Updater,
+    CommandHandler,
+    CallbackQueryHandler,
+    CallbackContext
 )
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🇧🇷 *Certifica Já Brasil*\n\n"
-        "Grupo educacional com atuação nacional.\n"
-        "Trabalhamos com instituições reconhecidas pelo MEC.\n\n"
-        "📌 Certificados válidos em todo o Brasil\n"
-        "📌 Processo rápido, seguro e sigiloso\n\n"
+# =========================
+# CONFIGURAÇÃO
+# =========================
+TOKEN = os.getenv("BOT_TOKEN")
+
+ATENDENTE = "https://t.me/seu_usuario_aqui"  # troque depois
+
+# =========================
+# LISTAS DE CURSOS
+# =========================
+
+POS_GRADUACAO = [
+    "Pós em Gestão Empresarial",
+    "Pós em Educação Inclusiva",
+    "Pós em Psicopedagogia",
+    "Pós em Docência do Ensino Superior",
+    "Pós em Gestão Pública"
+]
+
+ENSINO_MEDIO = [
+    "Conclusão do Ensino Médio (EJA)"
+]
+
+SUPERIOR = [
+    "Administração",
+    "Pedagogia",
+    "Gestão de Recursos Humanos",
+    "Ciências Contábeis",
+    "Serviço Social"
+]
+
+TECNICO = [
+    "Técnico em Enfermagem",
+    "Técnico em Segurança do Trabalho",
+    "Técnico em Administração",
+    "Técnico em Informática"
+]
+
+# =========================
+# COMANDOS
+# =========================
+
+def start(update: Update, context: CallbackContext):
+    keyboard = [
+        [InlineKeyboardButton("🎓 Pós-Graduação", callback_data="pos")],
+        [InlineKeyboardButton("📘 Ensino Médio", callback_data="medio")],
+        [InlineKeyboardButton("🏫 Ensino Superior", callback_data="superior")],
+        [InlineKeyboardButton("🛠 Técnico", callback_data="tecnico")],
+        [InlineKeyboardButton("❓ Não encontrei meu curso", callback_data="atendente")]
+    ]
+
+    update.message.reply_text(
+        "👋 *Bem-vindo à Certifica Já Brasil*\n\n"
+        "📚 Vendas 24h de certificados e cursos reconhecidos pelo MEC.\n"
         "Escolha uma opção abaixo:",
-        reply_markup=menu_principal,
-        parse_mode="Markdown"
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
-async def cursos(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    msg = update.message.text
-    texto = ""
+def menu_callback(update: Update, context: CallbackContext):
+    query = update.callback_query
+    query.answer()
 
-    if msg == "🎓 Pós-graduação":
-        texto = (
-            "🎓 *Pós-graduação disponíveis:*\n\n"
-            "• Gestão de Pessoas\n"
-            "• MBA em Administração\n"
-            "• Gestão Pública\n"
-            "• Docência do Ensino Superior\n"
-            "• Marketing Digital\n\n"
+    data = query.data
+
+    if data == "pos":
+        send_list(query, "🎓 *Pós-Graduação*", POS_GRADUACAO)
+    elif data == "medio":
+        send_list(query, "📘 *Ensino Médio*", ENSINO_MEDIO)
+    elif data == "superior":
+        send_list(query, "🏫 *Ensino Superior*", SUPERIOR)
+    elif data == "tecnico":
+        send_list(query, "🛠 *Cursos Técnicos*", TECNICO)
+    elif data == "atendente":
+        query.edit_message_text(
+            "❗ Não encontrou o curso desejado?\n\n"
+            "👉 Clique abaixo e fale com um atendente:",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("💬 Falar com atendente", url=ATENDENTE)]
+            ])
+        )
+
+def send_list(query, title, items):
+    text = f"{title}\n\n"
+    for item in items:
+        text += f"• {item}\n"
+
+    text += (
+        "\n💰 Valores sob consulta\n"
+        "📄 Certificados válidos em todo território nacional\n\n"
+        "👉 Para comprar, fale com um atendente."
+    )
+
+    query.edit_message_text(
+        text,
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("💬 Falar com atendente", url=ATENDENTE)],
+            [InlineKeyboardButton("⬅️ Voltar ao menu", callback_data="voltar")]
+        ])
+    )
+
+def voltar_menu(update: Update, context: CallbackContext):
+    query = update.callback_query
+    query.answer()
+    start(query, context)
+
+# =========================
+# MAIN
+# =========================
+
+def main():
+    if not TOKEN:
+        raise Exception("BOT_TOKEN não configurado")
+
+    updater = Updater(TOKEN, use_context=True)
+    dp = updater.dispatcher
+
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CallbackQueryHandler(menu_callback))
+
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == "__main__":
+    main()            "• Marketing Digital\n\n"
             "📌 Caso seu curso não esteja na lista,\n"
             "clique em *Meu curso não está na lista*"
         )
