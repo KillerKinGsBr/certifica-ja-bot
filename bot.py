@@ -1,40 +1,95 @@
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
-    Updater,
+    ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
-    CallbackContext
+    ContextTypes
 )
 
-# =========================
-# CONFIGURAÇÃO
-# =========================
-TOKEN = os.getenv("BOT_TOKEN")
+# ==================================================
+# TOKEN DO BOT (VARIÁVEL DE AMBIENTE)
+# ==================================================
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-ATENDENTE = "https://t.me/seu_usuario_aqui"  # troque depois
+if not TOKEN:
+    raise RuntimeError(
+        "TOKEN não encontrado. Defina a variável TELEGRAM_BOT_TOKEN"
+    )
 
-# =========================
-# LISTAS DE CURSOS
-# =========================
 
-POS_GRADUACAO = [
-    "Pós em Gestão Empresarial",
-    "Pós em Educação Inclusiva",
-    "Pós em Psicopedagogia",
-    "Pós em Docência do Ensino Superior",
-    "Pós em Gestão Pública"
-]
+# ==================================================
+# /start
+# ==================================================
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [InlineKeyboardButton("📘 Ensino Médio", callback_data="ensino_medio")],
+        [InlineKeyboardButton("🛠 Cursos Técnicos", callback_data="cursos_tecnicos")],
+        [InlineKeyboardButton("🎓 Graduação (Ensino Superior)", callback_data="graduacao")],
+        [InlineKeyboardButton("📚 Pós-graduações", callback_data="pos_graduacao")]
+    ]
 
-ENSINO_MEDIO = [
-    "Conclusão do Ensino Médio (EJA)"
-]
+    await update.message.reply_text(
+        "👋 *Bem-vindo!*\n\n"
+        "Escolha uma opção abaixo:",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode="Markdown"
+    )
 
-SUPERIOR = [
-    "Administração",
-    "Pedagogia",
-    "Gestão de Recursos Humanos",
-    "Ciências Contábeis",
+
+# ==================================================
+# CALLBACK
+# ==================================================
+async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    mensagens = {
+        "ensino_medio": (
+            "📘 *Ensino Médio*\n\n"
+            "✔ Conclusão do ensino médio\n"
+            "✔ Certificado reconhecido pelo MEC\n"
+            "✔ Válido em todo o Brasil"
+        ),
+        "cursos_tecnicos": (
+            "🛠 *Cursos Técnicos*\n\n"
+            "✔ Diversas áreas\n"
+            "✔ Certificação válida\n"
+            "✔ Entrada rápida no mercado"
+        ),
+        "graduacao": (
+            "🎓 *Graduação (Ensino Superior)*\n\n"
+            "✔ Faculdades reconhecidas pelo MEC\n"
+            "✔ Diploma válido nacionalmente"
+        ),
+        "pos_graduacao": (
+            "📚 *Pós-graduações*\n\n"
+            "✔ Especializações reconhecidas\n"
+            "✔ Certificado válido"
+        )
+    }
+
+    await query.edit_message_text(
+        mensagens.get(query.data, "Opção inválida."),
+        parse_mode="Markdown"
+    )
+
+
+# ==================================================
+# MAIN
+# ==================================================
+def main():
+    app = ApplicationBuilder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(menu_callback))
+
+    print("🤖 Bot iniciado com sucesso")
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()    "Ciências Contábeis",
     "Serviço Social"
 ]
 
