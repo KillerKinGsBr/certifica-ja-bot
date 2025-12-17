@@ -87,7 +87,7 @@ DOCUMENTOS = {
         "RG", "CPF", "Comprovante de residência", "Título de eleitor",
         "Certidão de nascimento", "Histórico do fundamental", "Reservista"
     ],
-    "tecnologo": [  # caso queira futuramente incluir tecnólogo
+    "tecnologo": [
         "RG", "CPF", "Comprovante de residência", "Título de eleitor",
         "Certidão de nascimento", "Diploma do Ensino Superior", "Certidão de quitação eleitoral"
     ]
@@ -177,18 +177,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 # ========================
-# FUNÇÃO PRINCIPAL
+# INÍCIO
 # ========================
-async def main():
+if __name__ == "__main__":
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_callback))
     print("Bot rodando...")
-    await app.run_polling()
-
-# ========================
-# INÍCIO
-# ========================
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    app.run_polling()
