@@ -10,7 +10,27 @@ if not TOKEN:
     raise RuntimeError("TELEGRAM_BOT_TOKEN não configurado")
 
 # ========================
-# CURSOS COM DESCRIÇÃO
+# TERMO DE USO
+# ========================
+TERMO_USO = (
+    "🛡️ *TERMO DE USO – SAMUEL CERTIFICAÇÕES*\n\n"
+    "Declaro que estou contratando os serviços da *Samuel Certificações* "
+    "(CNPJ nº 48.005.112/0001-61), referentes à *prestação de serviços educacionais*, "
+    "incluindo *Educação de Jovens e Adultos (EJA)* e *Cursos de Graduação*, "
+    "na modalidade *EAD*.\n\n"
+    "Estou ciente de que:\n"
+    "✔️ O serviço refere-se à formação educacional escolhida\n"
+    "✔️ A entrega do diploma ou certificado é garantida mediante cumprimento das exigências do curso\n"
+    "✔️ O ensino ocorre na modalidade EAD\n"
+    "✔️ O não cumprimento de atividades, avaliações ou exigências documentais pode atrasar ou impedir a conclusão\n"
+    "✔️ *Não há reembolso após o início do processo ou curso*\n"
+    "✔️ Informações ou documentos falsos resultam em cancelamento imediato, sem devolução\n"
+    "✔️ O aceite eletrônico possui plena validade jurídica\n\n"
+    "📌 *Clique em ACEITAR para continuar.*"
+)
+
+# ========================
+# CURSOS
 # ========================
 CURSOS = {
     "pos_graduacao": [
@@ -20,168 +40,139 @@ CURSOS = {
         {"nome": "MBA em Gestão Financeira", "emoji": "💰"},
         {"nome": "Gestão Pública", "emoji": "🏛️"},
         {"nome": "Auditoria e Controladoria", "emoji": "🧾"},
-        {"nome": "Docência do Ensino Superior", "emoji": "🎓"},
-        {"nome": "Psicopedagogia", "emoji": "🧠"},
-        {"nome": "Gestão Escolar", "emoji": "🏫"},
-        {"nome": "Segurança do Trabalho", "emoji": "🦺"},
-        {"nome": "Direito do Trabalho e Previdenciário", "emoji": "⚖️"},
-        {"nome": "Enfermagem do Trabalho", "emoji": "🩺"},
-        {"nome": "Saúde Pública", "emoji": "🏥"},
-        {"nome": "Marketing Digital", "emoji": "💻"},
-        {"nome": "Gestão Hospitalar", "emoji": "🏨"},
     ],
     "superior": [
         {"nome": "Administração", "emoji": "🏢"},
         {"nome": "Pedagogia", "emoji": "📚"},
         {"nome": "Serviço Social", "emoji": "🤝"},
         {"nome": "Ciências Contábeis", "emoji": "🧾"},
-        {"nome": "Educação Física", "emoji": "🏃‍♂️"},
-        {"nome": "Gestão de Recursos Humanos", "emoji": "👥"},
-        {"nome": "Gestão Financeira", "emoji": "💰"},
-        {"nome": "Logística", "emoji": "🚚"},
-        {"nome": "Marketing", "emoji": "📈"},
-        {"nome": "Processos Gerenciais", "emoji": "⚙️"},
-        {"nome": "Análise e Desenvolvimento de Sistemas", "emoji": "💻"},
-        {"nome": "Sistemas de Informação", "emoji": "🖥️"},
-        {"nome": "Engenharia de Produção", "emoji": "🏭"},
-        {"nome": "Gestão Pública", "emoji": "🏛️"},
     ],
     "medio": [
         {"nome": "Conclusão do Ensino Médio", "emoji": "📝"},
         {"nome": "Certificação por Competência", "emoji": "✅"},
-        {"nome": "Histórico Escolar", "emoji": "📄"},
-        {"nome": "Declaração de Conclusão", "emoji": "🖋️"},
-        {"nome": "Certificado válido nacional", "emoji": "🎖️"},
     ],
     "tecnico": [
         {"nome": "Técnico em Administração", "emoji": "🏢"},
         {"nome": "Técnico em Enfermagem", "emoji": "🩺"},
-        {"nome": "Técnico em Segurança do Trabalho", "emoji": "🦺"},
-        {"nome": "Técnico em Logística", "emoji": "🚚"},
-        {"nome": "Técnico em Informática", "emoji": "💻"},
-        {"nome": "Técnico em Eletrotécnica", "emoji": "⚡"},
-        {"nome": "Técnico em Mecânica", "emoji": "🔧"},
-        {"nome": "Técnico em Recursos Humanos", "emoji": "👥"},
-        {"nome": "Técnico em Contabilidade", "emoji": "🧾"},
-        {"nome": "Técnico em Edificações", "emoji": "🏗️"},
     ]
 }
 
 # ========================
-# DOCUMENTOS POR CATEGORIA
+# DOCUMENTOS
 # ========================
 DOCUMENTOS = {
-    "medio": [
-        "RG", "CPF", "Comprovante de residência", "Título de eleitor",
-        "Certidão de nascimento", "Histórico do fundamental", "Reservista"
-    ],
-    "superior": [
-        "RG", "CPF", "Comprovante de residência", "Título de eleitor",
-        "Certidão de nascimento", "Diploma do Ensino Médio", "Certidão de quitação eleitoral"
-    ],
-    "pos_graduacao": [
-        "RG", "CPF", "Comprovante de residência", "Título de eleitor",
-        "Certidão de nascimento", "Diploma do Ensino Superior", "Certidão de quitação eleitoral"
-    ],
-    "tecnico": [
-        "RG", "CPF", "Comprovante de residência", "Título de eleitor",
-        "Certidão de nascimento", "Histórico do fundamental", "Reservista"
-    ],
-    "tecnologo": [
-        "RG", "CPF", "Comprovante de residência", "Título de eleitor",
-        "Certidão de nascimento", "Diploma do Ensino Superior", "Certidão de quitação eleitoral"
-    ]
+    "medio": ["RG", "CPF", "Comprovante de residência"],
+    "superior": ["RG", "CPF", "Comprovante de residência", "Diploma do Ensino Médio"],
+    "pos_graduacao": ["RG", "CPF", "Comprovante de residência", "Diploma do Ensino Superior"],
+    "tecnico": ["RG", "CPF", "Comprovante de residência"],
 }
 
-# ========================
-# PAGINAÇÃO
-# ========================
 CURSOS_POR_PAGINA = 6
 
 # ========================
-# HANDLER /start
+# START
 # ========================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["aceitou_termo"] = False
+
+    keyboard = [
+        [InlineKeyboardButton("✅ ACEITAR", callback_data="aceitar_termo")],
+        [InlineKeyboardButton("❌ NÃO ACEITO", callback_data="recusar_termo")]
+    ]
+    await update.message.reply_text(
+        TERMO_USO,
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode="Markdown"
+    )
+
+# ========================
+# MENU PRINCIPAL
+# ========================
+async def mostrar_menu(query):
     keyboard = [
         [InlineKeyboardButton("🎓 Pós-Graduação", callback_data="pos_graduacao_0")],
         [InlineKeyboardButton("🎓 Ensino Superior", callback_data="superior_0")],
         [InlineKeyboardButton("🧑‍🎓 Ensino Médio", callback_data="medio_0")],
         [InlineKeyboardButton("🛠️ Cursos Técnicos", callback_data="tecnico_0")]
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        "👋 Olá! Bem-vindo(a) ao nosso bot de matrícula.\nEscolha a categoria desejada:",
-        reply_markup=reply_markup
+    await query.edit_message_text(
+        "👋 *Bem-vindo(a)!*\nEscolha a categoria desejada:",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode="Markdown"
     )
 
 # ========================
-# CALLBACK DOS BOTÕES
+# CALLBACK
 # ========================
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     data = query.data
 
-    if data == "voltar":
-        await start(update, context)
+    # Aceite do termo
+    if data == "aceitar_termo":
+        context.user_data["aceitou_termo"] = True
+        await mostrar_menu(query)
         return
 
-    # Curso escolhido
+    if data == "recusar_termo":
+        await query.edit_message_text(
+            "❌ Para utilizar nossos serviços, é obrigatório aceitar o Termo de Uso."
+        )
+        return
+
+    if not context.user_data.get("aceitou_termo"):
+        await query.edit_message_text("⚠️ É necessário aceitar o Termo de Uso para continuar.")
+        return
+
+    if data == "voltar":
+        await mostrar_menu(query)
+        return
+
     if data.startswith("curso_"):
         _, categoria, idx = data.split("_")
-        idx = int(idx)
-        curso = CURSOS[categoria][idx]
+        curso = CURSOS[categoria][int(idx)]
+        docs = DOCUMENTOS.get(categoria, [])
+        lista = "\n".join(f"• {d}" for d in docs)
 
-        documentos = DOCUMENTOS.get(categoria, [])
-        lista_docs = "\n".join(f"• {doc}" for doc in documentos)
-
-        msg = (
+        await query.edit_message_text(
             f"{curso['emoji']} *{curso['nome']}*\n\n"
-            f"Para efetuar a matrícula, por favor envie os seguintes documentos:\n\n{lista_docs}\n\n"
-            "📌 Envie os documentos em formato de foto ou PDF neste chat."
+            f"📄 *Documentos necessários:*\n{lista}\n\n"
+            "📌 Envie os documentos neste chat.",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("⬅ Voltar", callback_data=f"{categoria}_0")]]
+            )
         )
-
-        keyboard = [[InlineKeyboardButton("⬅ Voltar", callback_data=f"{categoria}_0")]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.edit_message_text(msg, reply_markup=reply_markup, parse_mode="Markdown")
         return
 
-    # Paginação
     if "_" in data:
         categoria, pagina = data.split("_")
         pagina = int(pagina)
-        cursos_categoria = CURSOS[categoria]
+
+        cursos = CURSOS[categoria]
         inicio = pagina * CURSOS_POR_PAGINA
         fim = inicio + CURSOS_POR_PAGINA
-        subset = cursos_categoria[inicio:fim]
 
         keyboard = [
-            [InlineKeyboardButton(f"{curso['emoji']} {curso['nome']}", callback_data=f"curso_{categoria}_{inicio + i}")]
-            for i, curso in enumerate(subset)
+            [InlineKeyboardButton(f"{c['emoji']} {c['nome']}", callback_data=f"curso_{categoria}_{inicio+i}")]
+            for i, c in enumerate(cursos[inicio:fim])
         ]
 
-        nav_buttons = []
-        if pagina > 0:
-            nav_buttons.append(InlineKeyboardButton("⬅ Anterior", callback_data=f"{categoria}_{pagina - 1}"))
-        if fim < len(cursos_categoria):
-            nav_buttons.append(InlineKeyboardButton("Próximo ➡", callback_data=f"{categoria}_{pagina + 1}"))
-        if nav_buttons:
-            keyboard.append(nav_buttons)
-
         keyboard.append([InlineKeyboardButton("⬅ Voltar", callback_data="voltar")])
-        reply_markup = InlineKeyboardMarkup(keyboard)
+
         await query.edit_message_text(
             f"*Cursos de {categoria.replace('_', ' ').title()}*",
-            reply_markup=reply_markup,
+            reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode="Markdown"
         )
 
 # ========================
-# INÍCIO
+# MAIN
 # ========================
 if __name__ == "__main__":
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_callback))
-    print("Bot rodando...")
+    print("🤖 Bot rodando...")
     app.run_polling()
